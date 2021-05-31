@@ -30,7 +30,7 @@ std::tuple<cv::Mat, cv::Mat> ArmorDetect::findRedPreprocess(const cv::Mat& frame
     // cv::merge(normalizedChannels, normalized);
 
     cv::Mat highlightImg;
-    cv::threshold(channels[1], highlightImg, 0, 255, cv::THRESH_OTSU);
+    cv::threshold(channels[1], highlightImg, this->params.highlightThresholdForRed, 255, cv::THRESH_BINARY);
 
     cv::Mat colorImg = channels[2] - channels[0];
     cv::threshold(colorImg, colorImg, this->params.colorThresholdForRed, 255, cv::THRESH_BINARY);
@@ -55,7 +55,7 @@ std::tuple<cv::Mat, cv::Mat> ArmorDetect::findBluePreprocess(const cv::Mat& fram
     // cv::merge(normalizedChannels, normalized);
 
     cv::Mat highlightImg;
-    cv::threshold(channels[1], highlightImg, 0, 255, cv::THRESH_OTSU);
+    cv::threshold(channels[1], highlightImg, this->params.colorThresholdForBlue, 255, cv::THRESH_BINARY);
 
     cv::Mat colorImg = channels[0] - channels[2];
     cv::threshold(colorImg, colorImg, this->params.colorThresholdForBlue, 255, cv::THRESH_BINARY);
@@ -74,10 +74,10 @@ std::vector<LightBar> ArmorDetect::findLightBars(const cv::Mat& highlight, const
     cv::findContours(color, colorContours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     cv::findContours(highlight, highlightContours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-    std::vector<cv::Rect> colorBoundingRects;
+    std::vector<cv::RotatedRect> colorBoundingRRects;
 
     for (const auto& c : colorContours) {
-        colorBoundingRects.push_back(cv::boundingRect(c));
+        colorBoundingRRects.push_back(cv::minAreaRect(c));
     }
 
     std::vector<LightBar> lightBars;
@@ -125,12 +125,12 @@ std::vector<LightBar> ArmorDetect::findLightBars(const cv::Mat& highlight, const
         if (ratio > Armor::maxLightBarLengthWidthRatio) continue;
         if (angle < Armor::lightBarMinAngle || angle > Armor::lightBarMaxAngle) continue;
 
-        auto rect = box.boundingRect();
 
         bool inside = false;
 
-        for (const auto& r : colorBoundingRects) {
-            if (isInside(rect, r)) {
+        for (const auto& r : colorBoundingRRects) {
+            std::vector<cv::Point2f> intersectingRegion;
+            if (cv::rotatedRectangleIntersection(r, box, intersectingRegion) != cv::INTERSECT_NONE) {
                 inside = true;
                 break;
             }

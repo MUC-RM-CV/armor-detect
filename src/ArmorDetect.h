@@ -12,10 +12,10 @@
 using ContoursVector = std::vector< std::vector< cv::Point > >;
 
 struct ArmorDetectParams {
-    int highlightThresholdForRed    = 120;
-    int highlightThresholdForBlue   = 150;
+    int highlightThresholdForRed    = 200;
+    int highlightThresholdForBlue   = 200;
     int colorThresholdForRed        = 30;
-    int colorThresholdForBlue       = 70;
+    int colorThresholdForBlue       = 30;
     float minLightBarArea           = 15;
     float lightBarsCenterMaxDiffY   = 20; // 0.05 * frame height
 };
