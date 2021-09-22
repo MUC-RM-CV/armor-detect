@@ -39,13 +39,12 @@ public:
 
         if (results.empty()) {
             lastTarget = Armor();
-            return std::vector<cv::Point2f>();
+            return {};
         } else {
             cv::Point2f pts[4];
             lastTarget = choice(results);
             lastTarget.points(pts);
-            std::vector<cv::Point2f> aimArea = {pts[0], pts[1], pts[2], pts[3]};
-            return aimArea;
+            return {pts[0], pts[1], pts[2], pts[3]};
         }
     }
 

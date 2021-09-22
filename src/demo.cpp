@@ -4,15 +4,13 @@
 
 #include "ArmorDetect.h"
 
-
-
 int main(int argc, char* argv[]) {
 
     cv::namedWindow("frame");
     cv::namedWindow("show");
 
     cv::Mat frame;
-    frame = cv::imread(cv::String(argv[1]));
+    frame = cv::imread(std::string(argv[1]));
     std::cout << frame.size();
     cv::imshow("frame", frame);
     cv::waitKey(0);
