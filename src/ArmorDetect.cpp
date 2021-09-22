@@ -6,11 +6,11 @@
 
 void drawTetragon(cv::Mat &image, cv::Point2f *vertices, const cv::Scalar &color) {
     using cv::Scalar;
-    int thickness = ceil(2e-3 * image.cols);
+    int thickness = (int)ceil(2e-3 * image.cols);
     for (int j = 0; j < 4; j++) {
         cv::line(image, vertices[j], vertices[(j + 1) % 4], color, thickness);
     }
-    int radius = ceil(1e-2 * image.cols);
+    int radius = (int)ceil(1e-2 * image.cols);
     // cv::circle(image, vertices[0], radius, Scalar(  0,   0, 255), -1); // red
     // cv::circle(image, vertices[1], radius, Scalar(  0, 255, 255), -1); // yellow
     // cv::circle(image, vertices[2], radius, Scalar(255,   0, 255), -1); // purple / violet
@@ -149,8 +149,8 @@ std::vector<Armor> ArmorDetect::lightBarsPairing(const std::vector<LightBar> &li
 
     std::vector<Armor> armors;
 
-    for (auto i = 0; i < lightBars.size() - 1; i++) {
-        for (auto j = i + 1; j < lightBars.size(); j++) {
+    for (size_t i = 0; i < lightBars.size() - 1; i++) {
+        for (size_t j = i + 1; j < lightBars.size(); j++) {
             auto maxBarLength = std::max(lightBars[i].length, lightBars[j].length);
 
             if (abs(lightBars[i].angle - lightBars[j].angle) > Armor::maxAngleBetweenLightBars) continue; // 两灯条夹角的差
